@@ -1,0 +1,78 @@
+#include <bits/stdc++.h>
+#define endl '\n'
+#define maxn 100005
+
+using namespace std;
+
+typedef long long ll;
+typedef double db;
+
+int mod = 1e9+7;
+
+int power ( int b, int e ){
+    int ret = 1;
+    while ( e ) {
+        if ( e&1 )
+            ret = ( 1ll * ret * b ) % mod;
+        e >>= 1;
+        b = ( 1ll * b * b ) % mod;
+    }
+    return ret;
+}
+
+int I[maxn];
+int inv ( int x ) {
+    return power ( x, mod-2 );
+}
+
+int f[maxn];
+
+int fun(int w, int n) {
+    int res = 0;
+    if(w >= n) {
+        for(int i= w-n+1; i<=n-1; i++) {
+            int tmp = ( 1ll * f[w] * I[i] ) % mod;
+            tmp = ( 1ll * tmp * I[w-i] ) % mod;
+            res = ( res + tmp ) % mod;
+        }
+        return res;
+    }
+
+    for ( int i = 0; i <= w; i ++ ) {
+        int tmp = ( 1ll * f[w] * I[i] ) % mod;
+            tmp = ( 1ll * tmp * I[w-i] ) % mod;
+            res = ( res + tmp ) % mod;
+    }
+    return res;
+}
+
+int main() {
+   #ifdef acm
+       freopen ("a.in", "r", stdin );
+   #endif // acm
+    ios_base::sync_with_stdio(0); cin.tie(0);
+
+    int n; cin >> n;
+    f[0] = 1;
+    I[0] = 1;
+    for ( int i = 1; i <= 10*n; i ++ ) {
+        f[i] = ( 1ll *f[i-1] * i ) % mod;
+        I[i] = inv ( f[i] );
+    }
+
+    int sol = 0;
+    for ( int i = n; i <= 3*n-2; i ++ ) {
+        //int tmp = power ( 2, i-n );
+        int tmp = fun(i-n,n);
+        tmp = ( 1ll * tmp * f[i-1] ) % mod;
+        tmp = ( 1ll * tmp * I[i-n] ) % mod;
+        tmp = ( 1ll * tmp * I[n-1] ) % mod;
+//        cout << i << ' ' << tmp << endl;
+
+        sol = ( sol + tmp ) % mod;
+    }
+    sol = ( 1ll * sol * 3 ) % mod;
+    cout << sol << endl;
+
+   return 0;
+}
